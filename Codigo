@@ -1,0 +1,62 @@
+CREATE DATABASE ATIVIDADE2
+USE ATIVIDADE2
+
+CREATE TABLE Clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50),
+    cidade VARCHAR(50)
+);
+INSERT INTO Clientes (nome, cidade) VALUES
+('Anakin Skywalker', 'Tatooine'),
+('Leia Organa', 'Alderaan'),
+('Yoda', 'Dagobah'),
+('Han Solo', 'Corellia');
+
+CREATE TABLE Pedidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT,
+    valor_total DECIMAL(10, 2) CHECK (valor_total >= 0),
+    data_pedido DATE,
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id)
+);
+INSERT INTO Pedidos (id_cliente, valor_total, data_pedido) VALUES
+(1 , 500.00, '2025-01-15'),
+(1, 750.00, '2025-02-20' ),
+(2, 1200.00, '2025-03-10'),
+(2, 300.00, '2025-04-05' ),
+(4, 1500.00, '2025-05-12'),
+(4, 200.00,'2025-06-18'),
+(4, 800.00,'2025-07-22');
+-- Consultas--
+-- Consultas simples --
+Select id, nome, cidade
+from clientes;
+
+ Select id,	id_cliente,	valor_total , data_pedido
+ from Pedidos;
+ -- Rigth Join--
+ Select 
+ c.id as Id_Cliente,
+ C.nome as Cliente, 
+ P.id as Id_Pedido,
+ P.valor_total as Total
+ from Pedidos P
+ right join Clientes C on P.id_cliente = C.id order by C.nome;
+ 
+-- Agregação--
+Select C.id As id_cliente, C.nome, Sum(p.valor_total)  As total_gasto
+From Clientes c
+Right Join Pedidos p on c.id = p.id_cliente
+Group by C.id;
+
+Select
+C.id as Id_cliente,
+C.nome as Cliente,
+sum(P.valor_total) as Total
+From Pedidos P 
+right Join Clientes C on C.id = P.ID_cliente
+group by c.id having sum(valor_total)>1000;
+
+-- Validação com CHECK-- 
+INSERT INTO Pedidos (id_cliente, valor_total, data_pedido)
+VALUES (4, -100.00, '2025-09-01');
